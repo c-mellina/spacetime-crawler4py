@@ -6,7 +6,8 @@ def scraper(url, resp):
     return [link for link in links if is_valid(link)]
 
 def extract_next_links(url, resp):
-    #use beautifulsoup or lxml to get content
+    # use beautifulsoup or lxml to get content
+    # ignore stop words
 
     # Implementation required.
     # url: the URL that was used to get the page
@@ -33,7 +34,15 @@ def is_valid(url):
 
     try:
         parsed = urlparse(url)
+        print(parsed)
         if parsed.scheme not in set(["http", "https"]):
+            return False
+        valid_domains = ["ics.uci.edu", "cs.uci.edu", "informatics.uci.edu", "stat.uci.edu"]
+        if not any(parsed.netloc == domain or parsed.netloc.endswith("." + domain) for domain in valid_domains):
+            return False
+        # avoid date traps
+        if re.search(r"\d{4}-\d{2}-\d{2}", parsed.query.lower()) or \
+            re.search(r"(month|year|day)=\d+", parsed.query.lower()):
             return False
         return not re.match(
             r".*\.(css|js|bmp|gif|jpe?g|ico"
@@ -48,3 +57,21 @@ def is_valid(url):
     except TypeError:
         print ("TypeError for ", parsed)
         raise
+
+def main():
+    testurls = ["https://courselisting.ics.uci.edu/ugrad_courses/",
+               "https://www.ics.uci.edu/",
+                "https://www.cs.uci.edu/grad/",
+                "https://www.informatics.uci.edu/about/",
+                "https://www.stat.uci.edu/seminars/",
+                "https://www.ics.uci.edu/page#section",
+                "https://www.ics.uci.edu/image.png", # bad extension
+                "https://google.com/", # wrong domain
+                "ftp://www.ics.uci.edu/", # bad schema
+                "https://ics.uci.edu/events/list/?tribe-bar-date=2026-05-16"] # date trap
+    for url in testurls:
+        print(is_valid(url))
+
+
+if __name__ == "__main__":
+    main()
