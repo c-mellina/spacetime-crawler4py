@@ -6,6 +6,8 @@ def scraper(url, resp):
     return [link for link in links if is_valid(link)]
 
 def extract_next_links(url, resp):
+    #use beautifulsoup or lxml to get content
+
     # Implementation required.
     # url: the URL that was used to get the page
     # resp.url: the actual url of the page
@@ -21,6 +23,14 @@ def is_valid(url):
     # Decide whether to crawl this url or not. 
     # If you decide to crawl it, return True; otherwise return False.
     # There are already some conditions that return False.
+
+    # REASONS NOT TO CRAWL:
+        # invalid extensions- not pointing to a webpage
+        # already crawled
+        # potential trap - example: ics calendar which will be infinite
+        # webpage is NOT a subdomain of *.ics.uci.edu/*, *.cs.uci.edu/*, *.informatics.uci.edu/*, or *.stat.uci.edu/*
+        # scheme is not http or https
+
     try:
         parsed = urlparse(url)
         if parsed.scheme not in set(["http", "https"]):
