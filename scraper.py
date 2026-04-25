@@ -74,6 +74,9 @@ def is_valid(url):
         if re.search(r"\d{4}-\d{2}-\d{2}", parsed.query.lower()) or \
             re.search(r"(month|year|day)=\d+", parsed.query.lower()):
             return False
+        # Avoiding doku.php (which seemed to be a crawler trap)
+        if "doku.php" in parsed.path:
+            return False
         return not re.match(
             r".*\.(css|js|bmp|gif|jpe?g|ico|ics"
             + r"|png|tiff?|mid|mp2|mp3|mp4"
