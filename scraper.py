@@ -80,7 +80,9 @@ def is_valid(url):
         # Avoiding date traps ALSO IN THE PATH
         if re.search(r"\d{4}-\d{2}-\d{2}", parsed.path.lower()) or \
             re.search(r"\d{2}-\d{2}-\d{4}", parsed.path.lower()) or \
-            re.search(r"\d{4}-\d{2}", parsed.path.lower()):
+            re.search(r"\d{4}-\d{2}", parsed.path.lower()) or \
+            re.search(r"\d{4}-", parsed.path.lower()) or \
+            re.search(r"-\d{4}", parsed.path.lower()):
             return False
         # Avoiding doku.php (which seemed to be a crawler trap)
         if "doku.php" in parsed.path:
