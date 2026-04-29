@@ -54,6 +54,13 @@ def extract_next_links(url, resp):
         new_url = new_url.split("#")[0]
         if new_url:
             found_urls.append(new_url)
+    
+    # Using this content, we can also call content.get_text(strip=True)
+    # Then, we could hopefully split() this string using " " as a delimiter
+    # Then we iterate through each word (perhaps tokenizing it)
+    # We check if this is a stop word, and if not, we can add it to a counter dictionary
+    # This would let us find the 50 most common words
+    # We should also keep track of the number of words
 
 
     return found_urls
