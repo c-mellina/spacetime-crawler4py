@@ -100,8 +100,7 @@ def extract_next_links(url, resp):
     # parse text and ignore stop words
     text = content.get_text()
     words = re.split(r'\W+', text.lower())
-    words = [w for w in words if w and w not in stop_words]
-
+    words = [w for w in words if w and len(w) > 1 and w not in stop_words and not w.isnumeric()]
 
     #update all analytics including subdomain count
     analytics.add_page(urldefrag(resp.url).url, words)
@@ -142,9 +141,20 @@ def is_valid(url):
             re.search(r"\d{4}-", parsed.path.lower()) or \
             re.search(r"-\d{4}", parsed.path.lower()):
             return False
-        # Avoiding doku.php (which seemed to be a crawler trap)
+        # Avoiding b/c seemed to be a crawler trap)
         if "doku.php" in parsed.path:
             return False
+        if "/events/" in parsed.path.lower():
+            return False
+        # query traps
+        if parsed.query:
+            query = parsed.query.lower()
+            if any(x in query for x in [
+                "tribe",
+                "ical",
+                "eventdisplay"
+            ]):
+                return False
         # avoiding some unneccessary sites it spent a lot of time on
         if ("~dechter/softwares/" in parsed.path) or ("~dechter/courses/" in parsed.path):
             return False
@@ -183,7 +193,11 @@ def main():
                 "https://www.ics.uci.edu/image.png", # False, bad extension
                 "https://google.com/", # False, wrong domain
                 "ftp://www.ics.uci.edu/", # False, bad schema
-                "https://ics.uci.edu/events/list/?tribe-bar-date=2026-05-16",] # False, date trap
+                "https://ics.uci.edu/events/list/?tribe-bar-date=2026-05-16", # False, date trap
+                "https://isg.ics.uci.edu/events/tag/talk/list/?eventDisplay=past",#false
+                "https://ics.uci.edu/event/hci-for-agi/?ical=1", #false
+                "http://ngs.ics.uci.edu/research/projects",
+                "https://wics.ics.uci.edu/contact",]
     for url in testurls:
         print(is_valid(url))
 
