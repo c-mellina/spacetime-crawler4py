@@ -2,6 +2,7 @@ import re
 from urllib.parse import urlparse, urljoin, urldefrag
 from bs4 import BeautifulSoup
 import analytics
+from dup_detector import ExactDetector, NearDetector
 
 def scraper(url, resp):
     links = extract_next_links(url, resp)
@@ -101,6 +102,15 @@ def extract_next_links(url, resp):
     text = content.get_text()
     words = re.split(r'\W+', text.lower())
     words = [w for w in words if w and len(w) > 1 and w not in stop_words and not w.isnumeric()]
+
+    # Tentative exact duplicate detection
+    exact_detector = ExactDetector
+    if exact_detector.is_exact_duplicate(words):
+        return []
+    
+    near_detector = NearDetector
+    if near_detector.is_near_duplicate(words):
+        return []
 
     #update all analytics including subdomain count
     analytics.add_page(urldefrag(resp.url).url, words)
