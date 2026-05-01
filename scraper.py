@@ -100,14 +100,14 @@ def extract_next_links(url, resp):
 
     # parse text and ignore stop words
     text = content.get_text()
+    # returning if page has no textual content
+    if not text:
+        return found_urls
     words = re.split(r'\W+', text.lower())
     words = [w for w in words if w and len(w) > 1 and w not in stop_words and not w.isnumeric()]
 
-    # returning if there were no words
-    if not words:
-        return found_urls
     # Tentative exact duplicate detection
-    exact_detector = ExactDetector
+    exact_detector = ExactDetector()
     if exact_detector.is_exact_duplicate(words):
         return []
     
