@@ -100,7 +100,7 @@ def extract_next_links(url, resp):
     # parse text and ignore stop words
     text = content.get_text()
     words = re.split(r'\W+', text.lower())
-    words = [w for w in words if w and w not in stop_words]
+    words = [w for w in words if w and len(w) > 1 and w not in stop_words]
 
 
     #update all analytics including subdomain count
