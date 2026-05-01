@@ -4,6 +4,10 @@ from bs4 import BeautifulSoup
 import analytics
 from dup_detector import ExactDetector, NearDetector
 
+# detectors persist across all pages 
+exact_detector = ExactDetector()
+near_detector = NearDetector(0.95)
+
 def scraper(url, resp):
     links = extract_next_links(url, resp)
     return [link for link in links if is_valid(link)]
@@ -98,6 +102,10 @@ def extract_next_links(url, resp):
         if new_url:
             found_urls.append(new_url)
 
+    #remove script tags so dont count as words
+    for tag in content(["script", "style"]):
+        tag.decompose()
+
     # parse text and ignore stop words
     text = content.get_text()
     words = re.split(r'\W+', text.lower())
@@ -107,11 +115,9 @@ def extract_next_links(url, resp):
     if not words:
         return found_urls
     # Tentative exact duplicate detection
-    exact_detector = ExactDetector
     if exact_detector.is_exact_duplicate(words):
         return []
     
-    near_detector = NearDetector(0.95)      # Threshold of 0.95
     if near_detector.is_near_duplicate(words):
         return []
 

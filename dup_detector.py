@@ -1,23 +1,16 @@
-class ExactDetector(object):
-    def __init__(self):
-        self.checkSum_set = {}
-    
-    def is_exact_duplicate(self, words):
-        checkSum = 0
-        for word in words:
-            for char in word:
-                checkSum += ord(char)
-        
-        if not checkSum in self.checkSum_set:
-            self.checkSum_set.add(checkSum)
-            return False
-        else:
-            return True
-
-
-
 from collections import Counter
 import hashlib
+
+class ExactDetector:
+    def __init__(self):
+        self.signatures = set()
+
+    def is_exact_duplicate(self, words):
+        signature = " ".join(words)
+        if signature in self.signatures:
+            return True
+        self.signatures.add(signature)
+        return False
 
 class NearDetector(object):
     def __init__(self, threshold):
@@ -34,8 +27,8 @@ class NearDetector(object):
                 # 1. Hash to bytes
                 # 2. Store every bit
                 # 3. Iterate through bits, changing fingerprint[i] by +/- count
-            bytes = hashlib.sha256(word.encode()).digest()      # https://docs.python.org/3/library/hashlib.html
-            bit_list = self.bytes_to_bits(bytes)
+            word_bytes = hashlib.sha256(word.encode()).digest()      # https://docs.python.org/3/library/hashlib.html
+            bit_list = self.bytes_to_bits(word_bytes)
             for i in range(len(bit_list)):
                 bit = bit_list[i]
                 if bit == 0:
@@ -53,16 +46,16 @@ class NearDetector(object):
         
         for other_fingerprint in self.fingerprint_list:
             similarity = self.compare_fingerprints(fingerprint, other_fingerprint)
-            if similarity > self.threshold:
+            if similarity >= self.threshold:
                 return True
         
         self.fingerprint_list.append(fingerprint)
         return False
 
 
-    def bytes_to_bits(self, bytes):
+    def bytes_to_bits(self, byte_data):
         return_bits = []
-        for byte in bytes:
+        for byte in byte_data:
             for i in range(8):
                 # Access bit at 0: (left to right)
                 # Ex. 10101110
