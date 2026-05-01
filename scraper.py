@@ -137,14 +137,12 @@ def is_valid(url):
         # Avoiding date traps ALSO IN THE PATH
         if re.search(r"\d{4}-\d{2}-\d{2}", parsed.path.lower()) or \
             re.search(r"\d{2}-\d{2}-\d{4}", parsed.path.lower()) or \
-            re.search(r"\d{4}-\d{2}", parsed.path.lower()) or \
-            re.search(r"\d{4}-", parsed.path.lower()) or \
-            re.search(r"-\d{4}", parsed.path.lower()):
-            return False
-        # Avoiding b/c seemed to be a crawler trap)
+            re.search(r"\d{4}-\d{2}", parsed.path.lower()):
+                return False
+        # Avoiding b/c seemed to be a crawler trap
         if "doku.php" in parsed.path:
             return False
-        if "/events/" in parsed.path.lower():
+        if "/events/" in parsed.path.lower() and parsed.query:
             return False
         # query traps
         if parsed.query:
