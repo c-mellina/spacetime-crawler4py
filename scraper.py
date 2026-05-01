@@ -108,7 +108,7 @@ def extract_next_links(url, resp):
     if exact_detector.is_exact_duplicate(words):
         return []
     
-    near_detector = NearDetector
+    near_detector = NearDetector(0.95)      # Threshold of 0.95
     if near_detector.is_near_duplicate(words):
         return []
 
