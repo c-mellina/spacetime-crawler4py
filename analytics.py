@@ -44,6 +44,6 @@ def write_report(filename="report.txt"):
             f.write(word + ", " + str(count) + "\n")
 
         #list of subdomains (in alphabetic order) + how many pages!
-        f.write("\nSubdomains:\n")
+        f.write("\nSubdomains: " + len(subdomains) + " total\n")
         for domain in sorted(subdomains):
             f.write(domain + ", " + str(subdomains[domain]) + "\n")
