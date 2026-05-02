@@ -6,7 +6,7 @@ word_counter = Counter()
 longest_page = ("", 0)
 subdomains = {}
 
-def add_page(url, words):
+def add_page(url, all_words, filtered_words):
     global longest_page
     
     #skip if already looked thru
@@ -15,10 +15,10 @@ def add_page(url, words):
     unique_pages.add(url)
 
     #check if this is the longest page seen
-    if len(words) > longest_page[1]:
-        longest_page = (url, len(words))
+    if len(all_words) > longest_page[1]:
+        longest_page = (url, len(all_words))
 
-    word_counter.update(words)
+    word_counter.update(filtered_words)
 
     parsed = urlparse(url)
     domain = parsed.netloc.lower()

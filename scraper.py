@@ -108,21 +108,21 @@ def extract_next_links(url, resp):
 
     # parse text and ignore stop words
     text = content.get_text()
-    words = re.split(r'\W+', text.lower())
-    words = [w for w in words if w and len(w) > 1 and w not in stop_words and not w.isnumeric()]
+    all_words = re.split(r'\W+', text.lower())
+    filtered_words = [w for w in all_words if w and len(w) > 1 and w not in stop_words and not w.isnumeric()]
 
     # returning if there were no words
-    if not words:
+    if not all_words:
         return found_urls
     # Tentative exact duplicate detection
-    if exact_detector.is_exact_duplicate(words):
+    if exact_detector.is_exact_duplicate(all_words):
         return []
     
-    if near_detector.is_near_duplicate(words):
+    if near_detector.is_near_duplicate(filtered_words):
         return []
 
     #update all analytics including subdomain count
-    analytics.add_page(urldefrag(resp.url).url, words)
+    analytics.add_page(urldefrag(resp.url).url, all_words, filtered_words)
 
     return found_urls
 
