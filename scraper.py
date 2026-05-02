@@ -163,7 +163,7 @@ def is_valid(url):
             return False
         if "/events/" in parsed.path.lower() and parsed.query:
             return False
-        if "version" in parsed.query.lower() and "grape.ics.uci.edu" in parsed.netloc:
+        if "grape.ics.uci.edu" in parsed.netloc and "/wiki/" in parsed.path:
             return False
         # query traps
         if parsed.query:
